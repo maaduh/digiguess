@@ -68,7 +68,7 @@
     </style>
 </head>
 <body>
-    <div>
+    <div class = "container">
         <h1>Login</h1>
         <form action="/portal" method="post">
             <label for="username">Nome:</label>
@@ -77,15 +77,20 @@
             <label for="password">Senha:</label>
             <input id="password" name="password" type="password" required />
 
-            <input value="Login" type="submit" />
+             <input value="Login" type="submit" />
+            <form action="/register" method="get">
+                <button type="submit">Register</button>
+            </form>
+           
         </form>
-         <form action="/register" method="get">
-            <button type="submit">Register</button>
-        </form>
+         
+       
+    </div>
+        
+    <div class = "box">
         <form action="/logout" method="post">
             <button type="submit">Logout</button>
         </form>
-       
     </div>
 </body>
 </html>
