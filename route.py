@@ -1,7 +1,6 @@
 from app.controllers.application import Application
 from bottle import Bottle, route, run, request, redirect, template, static_file, response
 
-
 app = Bottle()
 ctl = Application()
 
@@ -39,10 +38,11 @@ def action_portal():
     username = request.forms.get('username')
     password = request.forms.get('password')
     session_id, username= ctl.authenticate_user(username, password)
+    print(f"Username: {username}")
+    print(f"Session ID: {session_id}")
     if session_id:
-        response.set_cookie('session_id', session_id, httponly=True, \
-        secure=True, max_age=3600)
-        redirect(f'/pagina/{username}')
+        response.set_cookie('session_id', session_id, httponly=True, secure=True, max_age=3600)
+        return redirect(f'/pagina/{username}')
     else:
         return redirect('/portal')
 
@@ -54,7 +54,7 @@ def logout():
 
 
 #-----------------------------------------------------------------------------
-@app.route('/inicial')
+@app.route('/')
 def inicio():
     return ctl.render('inicial')
 
@@ -80,8 +80,9 @@ def action_register():
     else:
         return ctl.render('register')
 
+
 if __name__ == '__main__':
 
-    run(app, host='localhost', port=8081, debug=True)
+    run(app=app, host='localhost', port=8081, debug=True)
 
 

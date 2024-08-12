@@ -79,9 +79,13 @@
 
             <input value="Login" type="submit" />
         </form>
+         <form action="/register" method="get">
+            <button type="submit">Register</button>
+        </form>
         <form action="/logout" method="post">
             <button type="submit">Logout</button>
         </form>
+       
     </div>
 </body>
 </html>

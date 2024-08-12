@@ -52,19 +52,21 @@ class Application():
         return template('app/views/html/register')
 
 
-    def pagina(self,username=None):
+    def pagina(self, username=None):
         session_id = self.get_session_id()
+        print(f"username: {username}")
+        print(f"session_id: {session_id}")
         if username and session_id:
-            if self.__model.getUserName(session_id) == username:
+            current_user = self.__model.getUserName(session_id)
+            print(f"current_user from session: {current_user}")
+
+            if current_user == username:
                 user = self.__model.getCurrentUser(session_id)
-                return template('app/views/html/pagina', \
-                transfered=True, current_user=user)
+                return template('app/views/html/pagina', transfered=True, current_user=user)
             else:
-                return template('app/views/html/pagina', \
-                transfered=False)
+                return template('app/views/html/pagina', transfered=False)
         else:
-            return template('app/views/html/pagina', \
-            transfered=False)
+            return template('app/views/html/pagina', transfered=False)
 
 
     def is_authenticated(self, username):
