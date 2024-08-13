@@ -107,12 +107,6 @@
             </div>
         </form>
     </div>
-
-    <div class="box">
-        <form action="/logout" method="post">
-            <button type="submit">Logout</button>
-        </form>
-    </div>
 </body>
 </html>
 

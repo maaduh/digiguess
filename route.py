@@ -50,7 +50,7 @@ def action_portal():
 def logout():
     ctl.logout_user()
     response.delete_cookie('session_id')
-    redirect('/helper')
+    redirect('/')
 
 
 #-----------------------------------------------------------------------------

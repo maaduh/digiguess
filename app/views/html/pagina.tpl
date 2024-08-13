@@ -29,22 +29,24 @@
         h2 {
             color: #007BFF;
             margin-bottom: 20px;
+            font-size: 1.5em;
         }
 
         h3 {
             color: #555;
             margin-bottom: 20px;
+            font-size: 1.2em;
         }
 
         p {
-            font-size: 1.2em;
+            font-size: 1.1em;
             margin: 10px 0;
             color: #666;
         }
 
-        .button, .login-button {
+        .button, .login-button, .logout-button {
             display: inline-block;
-            margin-top: 20px;
+            margin: 0;  /* Removido o espaço entre os botões */
             padding: 10px 20px;
             background-color: #007BFF;
             color: white;
@@ -52,17 +54,24 @@
             border-radius: 5px;
             font-size: 1em;
             transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
         }
 
-        .button:hover, .login-button:hover {
+        .button:hover, .login-button:hover, .logout-button:hover {
             background-color: #0056b3;
+        }
+
+        .box {
+            margin-top: 10px;  /* Adicionado um pouco de espaço acima do botão de logout */
         }
     </style>
 </head>
 <body>
 
     % if transfered:
-
         <div>
             <h2>Bem-vindo(a) <span>{{current_user.username}}</span> à página do usuário</h2>
             <h3>Aqui você tem acesso aos seus dados e pode alterá-los</h3>
@@ -70,17 +79,21 @@
             <p>Username: {{current_user.username}}</p>
             <p>Password: {{current_user.password}}</p>
             <a href="/mudar" class="button">Mudar informações</a>
+            <form action="/logout" method="post" class="box">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
         </div>
 
     % else:
-
         <div>
             <h2>Esta é a página do usuário, para ter acesso, primeiro faça o login</h2>
-            <a href="portal" class="login-button">Login</a>
+            <a href="/portal" class="login-button">Login</a>
         </div>
-
     % end
 
 </body>
 </html>
+
+
+
 
