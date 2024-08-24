@@ -78,7 +78,7 @@
             <h2>Dados do Usuário:</h2>
             <p>Username: {{current_user.username}}</p>
             <p>Password: {{current_user.password}}</p>
-            <a href="/mudar" class="button">Mudar informações</a>
+            <a href="/mudar/{{current_user.username}}" class="button">Mudar informações</a>
             <form action="/logout" method="post" class="box">
                 <button type="submit" class="logout-button">Logout</button>
             </form>

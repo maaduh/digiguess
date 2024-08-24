@@ -12,6 +12,8 @@ class DataRecord():
         self.__authenticated_users = {}
         self.read()
 
+    def return_users(self):
+        return self.__user_accounts
 
     def user_exists(self, username):
         return any(user.username == username for user in self.__user_accounts)
@@ -68,3 +70,22 @@ class DataRecord():
     def logout(self, session_id):
         if session_id in self.__authenticated_users:
             del self.__authenticated_users[session_id] # Remove o usuário logado
+
+    def save(self):
+        with open("app/controllers/db/user_accounts.json", "w") as arquivo_json:
+            user_data = [vars(user_account) for user_account in self.__user_accounts]
+            json.dump(user_data, arquivo_json)
+
+    def change_user(self, current_user, new_user):
+        for user in self.__user_accounts:
+            if user.username == current_user:
+                user.username = new_user
+                self.save()
+
+    def change_password(self, username, new_password):
+        for user in self.__user_accounts:
+            if user.username == username:
+                user.password = new_password
+                self.save()
+
+

@@ -23,13 +23,11 @@ class Application():
         self.__model.book(username, password)
         return True
 
-    def render(self,page,parameter=None):
+    def render(self, page, parameter=None):
         content = self.pages.get(page, self.helper)
-        if not parameter:
-            return content()
-        else:
+        if parameter:
             return content(parameter)
-
+        return content()
 
     def get_session_id(self):
         return request.get_cookie('session_id')
@@ -45,12 +43,12 @@ class Application():
     def inicial(self):
         return template('app/views/html/inicial')
 
-    def mudar(self):
-        return template('app/views/html/mudar')
 
     def register(self):
         return template('app/views/html/register')
 
+    def mudar(self):
+        return template('app/views/html/mudar')
 
     def pagina(self, username=None):
         session_id = self.get_session_id()
@@ -92,3 +90,43 @@ class Application():
         session_id = self.get_session_id()
         if session_id:
             self.__model.logout(session_id)
+
+    def mudar_user(self, atual,nome = None, senha = None):
+        print('entrou1')
+        if (nome != None) and (senha != None):
+            self.__model.change_user(atual, nome)
+            self.__model.change_password(atual, senha)
+            print('entrou2')
+            return True
+
+        if (nome != None) and (senha == None):
+            self.__model.change_user(atual, nome)
+            print('entrou3')
+            return True
+
+        if (nome == None) and (senha != None):
+            self.__model.change_password(atual, senha)
+            print('entrou4')
+            return True
+
+    def mudar(self, username = None):
+        session_id = self.get_session_id()
+        print(f"username: {username}")
+        print(f"session_id: {session_id}")
+        if username and session_id:
+            current_user = self.__model.getUserName(session_id)
+            print(f"current_user from session: {current_user}")
+
+            if current_user == username:
+                user = self.__model.getCurrentUser(session_id)
+                return template('app/views/html/mudar', transfered=True, current_user=user)
+            else:
+                return template('app/views/html/mudar', transfered=False)
+        else:
+            return template('app/views/html/mudar', transfered=False)
+
+
+
+
+
+
