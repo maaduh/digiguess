@@ -11,7 +11,8 @@ class Application():
             'portal': self.portal,
             'inicial': self.inicial,
             'mudar': self.mudar,
-            'register': self.register
+            'register': self.register,
+            'admin': self.admin
         }
 
         self.__model= DataRecord()
@@ -49,6 +50,9 @@ class Application():
 
     def mudar(self):
         return template('app/views/html/mudar')
+    
+    def admin(self):
+        return template('app/views/html/admin')
 
     def pagina(self, username=None):
         session_id = self.get_session_id()
@@ -74,6 +78,8 @@ class Application():
             return True
         else:
             return False
+        
+    
 
 
     def authenticate_user(self, username, password):

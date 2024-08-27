@@ -42,6 +42,12 @@ class DataRecord():
             return self.__authenticated_users[session_id]
         else:
             return None
+        
+    def getAdmin(self,session_id):
+        if session_id in self.__authenticated_users:
+            return self.__authenticated_users[session_id].is_admin
+        else:
+            return None
 
 
     def getUserName(self,session_id):

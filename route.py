@@ -24,13 +24,22 @@ def helper():
 #-----------------------------------------------------------------------------
 # Suas rotas aqui:
 
+@app.route('/admin', method='GET')
+def admin():
+    return ctl.render('admin')
+
 @app.route('/pagina', methods=['GET'])
 @app.route('/pagina/<username>', methods=['GET'])
 def action_pagina(username=None):
     if not username:
         return ctl.render('pagina')
     else:
+        if DataRecord.getAdmin(username):
+            user_accounts = datarecord.return_users()
+            return ctl.render('admin',user_accounts=user_accounts, parameter = username)
+           
         return ctl.render('pagina',parameter = username)
+    
 
 
 @app.route('/portal', method='GET')
