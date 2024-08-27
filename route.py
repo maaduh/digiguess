@@ -34,10 +34,6 @@ def action_pagina(username=None):
     if not username:
         return ctl.render('pagina')
     else:
-        if DataRecord.getAdmin(username):
-            user_accounts = datarecord.return_users()
-            return ctl.render('admin',user_accounts=user_accounts, parameter = username)
-           
         return ctl.render('pagina',parameter = username)
     
 
@@ -58,6 +54,9 @@ def action_portal():
     if session_id:
         response.set_cookie('session_id', session_id, httponly=True, secure=True, max_age=3600)
         active_sessions[session_id] = username
+        if datarecord.getAdmin(username):
+            user_accounts = datarecord.return_users()
+            return template('app/views/html/admin', user_accounts=user_accounts)
         return redirect(f'/pagina/{username}')
     else:
         return redirect('/portal')

@@ -95,12 +95,13 @@
 <body>
     <div class="container">
         <h1>Portal do ADM</h1>
-        {% for user in user_accounts %}
-        <li>{{ user.username }}</li>
-        {% endfor %}
+        <ul>
+            % for i in user_accounts:
+            <li>{{ i.username }}</li>
+            % end
+        </ul>
            
             </div>
-        </form>
         <div class="box">
             <button onclick="window.location.href = '/';">Voltar</button>
         </div>
