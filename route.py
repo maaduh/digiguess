@@ -1,5 +1,6 @@
 from app.controllers.datarecord import DataRecord
 from app.controllers.application import Application
+import logging
 
 datarecord = DataRecord()
 active_sessions = {}
@@ -23,10 +24,6 @@ def helper():
 
 #-----------------------------------------------------------------------------
 # Suas rotas aqui:
-
-@app.route('/admin', method='GET')
-def admin():
-    return ctl.render('admin')
 
 @app.route('/pagina', methods=['GET'])
 @app.route('/pagina/<username>', methods=['GET'])
@@ -55,6 +52,7 @@ def action_portal():
         response.set_cookie('session_id', session_id, httponly=True, secure=True, max_age=3600)
         active_sessions[session_id] = username
         if datarecord.getAdmin(username):
+            datarecord.read()
             user_accounts = datarecord.return_users()
             return template('app/views/html/admin', user_accounts=user_accounts)
         return redirect(f'/pagina/{username}')
@@ -67,6 +65,33 @@ def logout():
     response.delete_cookie('session_id')
     redirect('/')
 
+@app.route('/admin_change', method='POST')
+def edit_user():
+    try:
+        # Parse the JSON body
+        user_data = request.json
+        if not user_data:
+            raise ValueError("No JSON data received")
+        username = user_data.get('username')
+        new_username = user_data.get('new_username')
+        new_password = user_data.get('new_password')
+
+        print(f"Received data - username: {username}, new_username: {new_username}, new_password: {new_password}")
+
+        # Call the mudar method to update the user
+        result = ctl.mudar_user(username, new_username, new_password)
+
+        if result:
+            response.status = 200
+            return {'status': 'success', 'message': 'User updated successfully'}
+        else:
+            response.status = 400
+            return {'status': 'error', 'message': 'Invalid input'}
+
+    except Exception as e:
+        response.status = 500
+        return {'status': 'error', 'message': str(e)}
+    
 
 #-----------------------------------------------------------------------------
 @app.route('/')

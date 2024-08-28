@@ -30,79 +30,69 @@
             margin-bottom: 25px;
         }
 
-        label {
-            display: block;
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
             margin-bottom: 10px;
-            color: #555;
-            font-weight: bold;
-            text-align: left;
         }
 
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .button-container input[type="submit"], .button-container a {
-            width: 100%;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-            text-decoration: none;
-            text-align: center;
-            box-sizing: border-box;
-        }
-
-        .button-container input[type="submit"]:hover, .button-container a:hover {
-            background-color: #0056b3;
-        }
-
-        .box {
-            margin-top: 20px;
-        }
-
-        .box button {
-            width: 100%;
-            padding: 12px;
-            background-color: #FF6347;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-
-        .box button:hover {
-            background-color: #e5533d;
+        button {
+            margin-left: 10px;
         }
     </style>
-
 </head>
 <body>
     <div class="container">
-        <h1>Portal do ADM</h1>
-        <ul>
-            % for i in user_accounts:
-            <li>{{ i.username }}</li>
-            % end
-        </ul>
-           
-            </div>
-        <div class="box">
-            <button onclick="window.location.href = '/';">Voltar</button>
-        </div>
+        
+            <h1>Portal do ADM</h1>
+            <ul>
+                % for user in user_accounts:
+                <li>{{ user.username }} <button onclick="editUser('{{ user.username }}', '{{ user.password }}')">Edit</button></li>
+                % end
+            </ul>
+    
     </div>
+    <div class="box">
+        <button onclick="window.location.href = '/';">Voltar</button>
+    </div>
+
+    <script>
+        function editUser(username) {
+            const newUsername = prompt("Enter new username for " + username, username);
+            const newPassword = prompt("Enter new password for " + username);
+            if (newUsername && newPassword) {
+                fetch(`/admin_change`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                    username: username,
+                    new_username: newUsername,
+                    new_password: newPassword
+                })
+                }).then(response => {
+                    if (response.ok) {
+                        alert('User updated successfully');
+                        window.location.href = '/portal';
+                        console.log('User updated successfully');
+                    } else {
+                        response.json().then(data => {
+                            alert('Failed to update user: ' + data.message);
+                        });
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update user');
+                });
+            }
+        }
+        
+       
+        
+    </script>
+</body>
+</html>

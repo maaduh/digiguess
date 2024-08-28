@@ -101,7 +101,7 @@ class Application():
         print('entrou1')
         if (nome != None) and (senha != None):
             self.__model.change_user(atual, nome)
-            self.__model.change_password(atual, senha)
+            self.__model.change_password(nome, senha)
             print('entrou2')
             return True
 
@@ -130,6 +130,25 @@ class Application():
                 return template('app/views/html/mudar', transfered=False)
         else:
             return template('app/views/html/mudar', transfered=False)
+        
+    def admin(self, username = None):
+        session_id = self.get_session_id()
+        is_admin = self.__model.getAdmin(username)
+        print(f"username: {username}")
+        print(f"session_id: {session_id}")
+        if username and session_id and is_admin:
+            current_user = self.__model.getUserName(session_id)
+            print(f"current_user from session is admin: {current_user}")
+
+            if current_user == username:
+                user = self.__model.getCurrentUser(session_id)
+                return template('app/views/html/admin', privilege=True, current_user=user)
+            else:
+                return template('app/views/html/admin', privilege=False)
+        else:
+            return template('app/views/html/admin', privilege=False)
+        
+    
 
 
 

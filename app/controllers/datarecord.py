@@ -87,11 +87,13 @@ class DataRecord():
             if user.username == current_user:
                 user.username = new_user
                 self.save()
+                self.read()
 
     def change_password(self, username, new_password):
         for user in self.__user_accounts:
             if user.username == username:
                 user.password = new_password
                 self.save()
+                self.read()
 
 
