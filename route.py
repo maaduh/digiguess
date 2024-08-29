@@ -34,7 +34,7 @@ def action_pagina(username=None):
         return ctl.render('pagina',parameter = username)
     
 
-
+#---------------------------------------------------------------------------
 @app.route('/portal', method='GET')
 def login():
     return ctl.render('portal')
@@ -58,13 +58,14 @@ def action_portal():
         return redirect(f'/pagina/{username}')
     else:
         return redirect('/portal')
-
+#-------------------------------------------------------------------------------
 @app.route('/logout', method='POST')
 def logout():
     ctl.logout_user()
     response.delete_cookie('session_id')
     redirect('/')
 
+#----------------------------------------------------------------------------
 @app.route('/admin_change', method='POST')
 def edit_user():
     try:
@@ -144,9 +145,21 @@ def action_register():
     else:
         return ctl.render('register')
 
+#-----------------------------------------------------------------------
+@app.route('/paint')
+def paint():
+    return ctl.render('paint')
+
 
 if __name__ == '__main__':
 
     run(app=app, host='localhost', port=8081, debug=True, reloader= True)
+
+
+
+
+
+
+
 
 
