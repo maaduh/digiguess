@@ -33,36 +33,59 @@
         ul {
             list-style-type: none;
             padding: 0;
+            margin: 0;
         }
 
         li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 8px 15px;
+            border-radius: 5px;
             margin-bottom: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
         button {
-            margin-left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background-color: #dc3545;
+        }
+
+        .back-button:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        
-            <h1>Portal do ADM</h1>
-            <ul>
-                % for user in user_accounts:
-                <li>{{ user.username }} <button onclick="editUser('{{ user.username }}', '{{ user.password }}')">Edit</button></li>
-                % end
-            </ul>
-    
-    </div>
-    <div class="box">
-        <button onclick="window.location.href = '/';">Voltar</button>
+        <h1>Portal do ADM</h1>
+        <ul>
+            % for user in user_accounts:
+            <li>{{ user.username }} <button onclick="editUser('{{ user.username }}')">Editar</button></li>
+            % end
+        </ul>
+        <button class="back-button" onclick="window.location.href = '/';">Voltar</button>
     </div>
 
     <script>
         function editUser(username) {
-            const newUsername = prompt("Enter new username for " + username, username);
-            const newPassword = prompt("Enter new password for " + username);
+            const newUsername = prompt("Digite o novo nome de usuário para " + username, username);
+            const newPassword = prompt("Digite a nova senha para " + username);
             if (newUsername && newPassword) {
                 fetch(`/admin_change`, {
                     method: 'POST',
@@ -70,26 +93,29 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                    username: username,
-                    new_username: newUsername,
-                    new_password: newPassword
-                })
+                        username: username,
+                        new_username: newUsername,
+                        new_password: newPassword
+                    })
                 }).then(response => {
                     if (response.ok) {
-                        alert('User updated successfully');
+                        alert('Usuário atualizado com sucesso');
                         window.location.href = '/portal';
-                        console.log('User updated successfully');
                     } else {
                         response.json().then(data => {
-                            alert('Failed to update user: ' + data.message);
+                            alert('Falha ao atualizar o usuário: ' + data.message);
                         });
                     }
                 }).catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to update user');
+                    console.error('Erro:', error);
+                    alert('Falha ao atualizar o usuário');
                 });
             }
         }
+    </script>
+</body>
+</html>
+
         
        
         
