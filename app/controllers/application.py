@@ -13,7 +13,6 @@ class Application():
             'mudar': self.mudar,
             'register': self.register,
             'admin': self.admin,
-            'paint': self.paint
         }
 
         self.__model= DataRecord()
@@ -33,9 +32,7 @@ class Application():
 
     def get_session_id(self):
         return request.get_cookie('session_id')
-
-    def paint(self):
-        return template('app/views/html/paint')
+    
     def helper(self):
         return template('app/views/html/helper')
 
@@ -82,8 +79,6 @@ class Application():
             return False
         
     
-
-
     def authenticate_user(self, username, password):
         self.logout_user()
         session_id = self.__model.checkUser(username, password)
@@ -98,6 +93,7 @@ class Application():
         session_id = self.get_session_id()
         if session_id:
             self.__model.logout(session_id)
+
 
     def mudar_user(self, atual,nome = None, senha = None):
         print('entrou1')
@@ -149,6 +145,8 @@ class Application():
                 return template('app/views/html/admin', privilege=False)
         else:
             return template('app/views/html/admin', privilege=False)
+        
+   
         
     
 
