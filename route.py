@@ -1,6 +1,12 @@
 from app.controllers.datarecord import DataRecord
 from app.controllers.application import Application
 import logging
+import base64
+from io import BytesIO
+from PIL import Image
+from app.models.neural_network import Network
+import numpy as np
+from datetime import datetime
 
 datarecord = DataRecord()
 active_sessions = {}
@@ -14,6 +20,9 @@ import io
 
 app = Bottle()
 ctl = Application()
+
+net = Network([784, 30, 10])
+net.load("/Users/gabrielbevilaqua/Desktop/workspace/digiguess/network.json")
 
 
 #-----------------------------------------------------------------------------
@@ -37,6 +46,32 @@ def action_pagina(username=None):
         return ctl.render('pagina')
     else:
         return ctl.render('pagina',parameter = username)
+        request.forms.get('username')
+
+@app.route('/pagina/<username>', method='POST')
+def handle_paint(username):
+
+    data = request.json
+    image_data = data['image']
+    timestamp = datetime.now().isoformat()
+    print(f"Timestamp: {timestamp}")
+    print(f"Received image data: {image_data[:100]}")
+
+    # Decode the base64 image data
+    base64_data = image_data.replace('data:image/png;base64,', '')
+    image = Image.open(BytesIO(base64.b64decode(base64_data)))
+    image = image.resize((28, 28))
+    image = image.convert('L')
+    image_array = np.array(image).flatten() / 255.0
+    image_array = image_array.reshape((784, 1))
+    prediction = net.feedforward(image_array)
+    prediction = prediction.flatten()
+    prediction_list = prediction.tolist()
+    print(f"Prediction: {prediction_list}")
+    predicted_class = int(np.argmax(prediction))
+    print(f"Predicted class: {predicted_class}")
+    response.content_type = 'application/json'
+    return {'prediction': predicted_class}
     
 
 #---------------------------------------------------------------------------
@@ -128,6 +163,10 @@ def action_mudando(username):
         return redirect('/portal')
     else:
         return ctl.render('mudar', parameter=username)
+    
+@app.route('/paint', method='GET')
+def paint():
+    return ctl.render('paint')
 
 
 
@@ -151,6 +190,7 @@ def action_register():
         return ctl.render('register')
 
 #-----------------------------------------------------------------------
+<<<<<<< HEAD
 w_i_h, b_i_h, w_h_o, b_h_o = None, None, None, None
 
 
@@ -161,6 +201,9 @@ model = tf.keras.models.load_model(model_path)
 @app.route("/paint")
 def paint():
     return ctl.render('paint')
+=======
+
+>>>>>>> f31fdd58d3da6d3b332fc87e51b918c16c67243b
 
 def process_image(image_data):
     image = Image.open(io.BytesIO(base64.b64decode(image_data.split(",")[1])))
