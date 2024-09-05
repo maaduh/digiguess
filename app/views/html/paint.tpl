@@ -46,7 +46,7 @@
 </head>
 <body>
     <h1>Escreva o número que você deseja no quadro branco</h1>
-    <canvas id="paintCanvas" width="280" height="280"></canvas> <!-- 28x28 pixels ampliados para melhor usabilidade -->
+    <canvas id="paintCanvas" width="280" height="280"></canvas> <!-- Canvas maior para desenho -->
     <div>
         <button id="sendButton">Enviar</button>
         <button id="clearButton">Limpar</button>
@@ -56,9 +56,6 @@
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
         let painting = false;
-
-        const scale = 10;
-        ctx.scale(scale, scale);
 
         function startPosition(e) {
             painting = true;
@@ -72,15 +69,15 @@
 
         function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / scale;
-            const y = (e.clientY - rect.top) / scale;
+            const x = (e.clientX - rect.left);
+            const y = (e.clientY - rect.top);
             return { x, y };
         }
 
         function draw(e) {
             if (!painting) return;
 
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 10;
             ctx.lineCap = 'round';
             ctx.strokeStyle = 'black';
 
@@ -95,8 +92,38 @@
         canvas.addEventListener('mouseup', endPosition);
         canvas.addEventListener('mousemove', draw);
 
+        function convertToGreyscale(imageData) {
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                // Convert to greyscale using the luminosity method
+                const avg = 0.2989 * data[i] + 0.5870 * data[i + 1] + 0.1140 * data[i + 2];
+                data[i] = avg; // Red
+                data[i + 1] = avg; // Green
+                data[i + 2] = avg; // Blue
+                // Alpha channel remains unchanged
+            }
+            return imageData;
+        }
+
         document.getElementById('sendButton').addEventListener('click', function() {
-            const dataURL = canvas.toDataURL('image/png');
+            // Cria um novo canvas para redimensionar a imagem
+            const smallCanvas = document.createElement('canvas');
+            smallCanvas.width = 28;
+            smallCanvas.height = 28;
+            const smallCtx = smallCanvas.getContext('2d');
+
+            // Desenha a imagem do canvas principal no novo canvas redimensionado
+            smallCtx.drawImage(canvas, 0, 0, 280, 280, 0, 0, 28, 28);
+
+            // Captura a imagem redimensionada
+            let imageData = smallCtx.getImageData(0, 0, 28, 28);
+
+            // Converte a imagem para escala de cinza
+            imageData = convertToGreyscale(imageData);
+            smallCtx.putImageData(imageData, 0, 0);
+
+            // Captura a imagem convertida
+            const dataURL = smallCanvas.toDataURL('image/png');
             fetch('http://localhost:8081/paint', {
                 method: 'POST',
                 headers: {

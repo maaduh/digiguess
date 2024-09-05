@@ -6,6 +6,11 @@ datarecord = DataRecord()
 active_sessions = {}
 
 from bottle import Bottle, route, run, request, redirect, template, static_file, response
+import tensorflow as tf
+import numpy as np
+import base64
+from PIL import Image
+import io
 
 app = Bottle()
 ctl = Application()
@@ -146,9 +151,65 @@ def action_register():
         return ctl.render('register')
 
 #-----------------------------------------------------------------------
-@app.route('/paint')
+w_i_h, b_i_h, w_h_o, b_h_o = None, None, None, None
+
+
+# Carrega o modelo
+model_path = "guesser/mnist_cnn.h5"
+model = tf.keras.models.load_model(model_path)
+
+@app.route("/paint")
 def paint():
     return ctl.render('paint')
+
+def process_image(image_data):
+    image = Image.open(io.BytesIO(base64.b64decode(image_data.split(",")[1])))
+
+    print(f"Modo da imagem original: {image.mode}, Tamanho: {image.size}")
+
+    print("Valores de pixels antes da conversão:", np.array(image).min(), np.array(image).max())
+
+    image_array = np.array(image)
+    grayscale_array = np.mean(image_array, axis=2)
+    print("Valores de pixels depois da conversão:", np.array(image).min(), np.array(image).max())
+
+    grayscale_array = np.resize(grayscale_array, (28, 28))
+    grayscale_array = grayscale_array / 255.0
+    image_array = grayscale_array.reshape (28, 28, 1)
+    print(f"Imagem final para o modelo - Dimensões: {image_array.shape}, Valores min/max: {image_array.min()}/{image_array.max()}")
+
+
+    return image_array
+
+
+
+
+@app.route('/paint', method='POST')
+def predict():
+    data = request.json
+    image_data = data['image']
+
+    print(f"Imagem recebida: {len(image_data)} caracteres.")
+
+    # Processar a imagem
+    image = process_image(image_data)
+
+    print(f"Imagem a ser usada para previsão: {image.shape}")
+
+    # Adicionar uma dimensão para o batch
+    image = np.expand_dims(image, axis=0)
+
+    # Verificar a normalização
+    image = np.clip(image, 0, 1)
+
+    # Fazer a previsão
+    prediction = model.predict(image)
+    predicted_digit = prediction.argmax()
+
+    print(f"Vetor de previsão: {prediction}")
+    print(f"Número previsto: {predicted_digit}")
+
+    return {'prediction': int(predicted_digit)}
 
 
 if __name__ == '__main__':

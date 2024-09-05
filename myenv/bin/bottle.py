@@ -2471,7 +2471,7 @@ def static_file(filename, root, mimetype='auto', download=False, charset='UTF-8'
         :param filename: Name or path of the file to send.
         :param root: Root path for file lookups. Should be an absolute directory
             path.
-        :param mimetype: Defines the content-type header (default: guess from
+        :param mimetype: Defines the content-type header (default: guess.py from
             file extension)
         :param download: If True, ask the browser to open a `Save as...` dialog
             instead of opening the file with the associated program. You can
@@ -3249,7 +3249,7 @@ class BaseTemplate(object):
     def __init__(self, source=None, name=None, lookup=[], encoding='utf8', **settings):
         """ Create a new template.
         If the source parameter (str or buffer) is missing, the name argument
-        is used to guess a template filename. Subclasses can assume that
+        is used to guess.py a template filename. Subclasses can assume that
         self.source and/or self.filename are set. Both are strings.
         The lookup, encoding and settings parameters are stored as instance
         variables.
