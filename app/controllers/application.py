@@ -13,6 +13,7 @@ class Application():
             'mudar': self.mudar,
             'register': self.register,
             'admin': self.admin,
+            'paint': self.paint
         }
 
         self.__model= DataRecord()
@@ -32,7 +33,9 @@ class Application():
 
     def get_session_id(self):
         return request.get_cookie('session_id')
-    
+
+    def paint(self):
+        return template('app/views/html/paint')
     def helper(self):
         return template('app/views/html/helper')
 
